@@ -1,22 +1,63 @@
-# Etapa 1: Build
-FROM ubuntu:latest AS build
-RUN apt-get update && apt-get install -y openjdk-17-jdk maven
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-# Define um diretório de trabalho consistente
-WORKDIR /app
+    <groupId>com.seu.grupo</groupId>
+    <artifactId>seu-projeto</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-# Copia tudo para /app
-COPY . .
+    <name>seu-projeto</name>
+    <description>Projeto Spring Boot com PostgreSQL 16</description>
 
-# Constrói o projeto
-RUN mvn clean install -DskipTests
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.1.2</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
-# Etapa 2: Execução
-FROM openjdk:17-jdk-slim
+    <properties>
+        <java.version>17</java.version>
+    </properties>
 
-EXPOSE 8080
+    <dependencies>
+        <!-- Spring Boot Starter Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 
-# Copia o .jar gerado do diretório correto
-COPY --from=build /app/target/*.jar app.jar
+        <!-- Spring Boot Starter Data JPA -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
 
-ENTRYPOINT [ "java", "-jar", "app.jar" ]
+        <!-- PostgreSQL Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.6.0</version>
+        </dependency>
+
+        <!-- Optional: Spring Boot Starter Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Spring Boot Maven Plugin -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
